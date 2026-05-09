@@ -42,18 +42,10 @@ final class MpesaExpressController
                 'raw_response' => json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
             ]);
 
-            Response::html(
-                '<h2>STK Push sent</h2><p>' .
-                htmlspecialchars((string) ($response['CustomerMessage'] ?? 'Request submitted.'), ENT_QUOTES, 'UTF-8') .
-                '</p><p><a href="' . base_url('app') . '">Return to dashboard</a></p>'
-            );
+            $message = (string) ($response['CustomerMessage'] ?? 'Request submitted.');
+            Response::redirect(base_url('app?success=' . urlencode($message)));
         } catch (\Throwable $exception) {
-            Response::html(
-                '<h2>Request failed</h2><p>' .
-                htmlspecialchars($exception->getMessage(), ENT_QUOTES, 'UTF-8') .
-                '</p><p><a href="' . base_url('app') . '">Return to dashboard</a></p>',
-                500
-            );
+            Response::redirect(base_url('app?error=' . urlencode($exception->getMessage())));
         }
     }
 
